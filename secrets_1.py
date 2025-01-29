@@ -1,0 +1,3 @@
+senderemail = ''
+epwd = ''
+to = ''
