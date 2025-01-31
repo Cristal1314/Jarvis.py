@@ -1,8 +1,16 @@
+from blinker import receiver_connected
 import pyttsx3 #pip install pyttsx3 == it is used to convert text to speech
 import datetime
+from service_identity import SubjectAltNameWarning
 import speech_recognition as sr
 import smtplib
-from secrets import senderemail, epwd, to 
+from secrets_1 import senderemail, epwd, to
+from email.message import EmailMessage
+# import pyautogui
+import webbrowser as wb
+from time import sleep
+import wikipedia
+
 engine = pyttsx3.init()
 
 def speak(text):
@@ -60,7 +68,7 @@ def takeCommandCMD():
 
 def takeCommandMIC():
     r = sr.Recognizer()
-    with sr.Microphone()as source:
+    with sr.Microphone() as source:
         print("listening....")
         r.pause_threshold = 1
         audio = r.listen(source)
@@ -74,7 +82,28 @@ def takeCommandMIC():
         return "None"
     return query
 
+def sendEmail(receiver, subject, content):
+    server = smtplib.SMTP('smtp.gamil.com', 587)
+    server.starttls()
+    server.login(senderemail, epwd)
+    email = EmailMessage()
+    email['From'] = senderemail
+    email['To'] = receiver
+    email['Subject'] = subject
+    email.set_content()
+    server.send_message(email)
+    server.sendEmail(senderemail, to,content)
+    server.close()
+
+sendEmail()
+
+def searchgoogle():
+    speak('What should I search for?')
+    search = takeCommandMIC()
+    wb.open("https://www.google.co.uk/?safe=active&ssui=on")
+
 if __name__ == "__main__":
+    # getvoices(1)
     wishme()
     while True:
         query = takeCommandCMD().lower()
@@ -82,24 +111,44 @@ if __name__ == "__main__":
             time()
         elif 'date' in query:
             date()
-        elif 'email' in query:
-            try:
-                speak('what should I say?')
-                content = takeCommandMIC()
-                senderemail(content)
-                speak('email has been send')
-            except Exception as e:
-                print(e)
+while True:
+    query = takeCommandMIC().lower()
+    if 'time' in query:
+        time()
+    elif 'date' in query:
+        date()
+    elif 'email' in query:
+        email_list = {
+            'testemail': 'itzanxkqrofhfrgwfn@kiabws.com'
+        }
+        try:
+            speak("To whom you want to send the email?")
+            name = takeCommandMIC
+            receiver = email_list[name]
+            speak("what is the subject of the mail?")
+            subject = takeCommandCMD
+            speak('what should I say?')
+            content = takeCommandMIC()
+            sendEmail(receiver,subject,content)
+            speak('email has been send')
+        except Exception as e:
+            print(e)
             speak("unable to end email")
-        elif 'offline' in query:
-            quit()
+    elif 'offline' in query:
+         quit()
 
-#-----------------------------------Send Email Function---------------------------------------------------------
-def sendEmail():
-    server = smtplib.SMIP('smtp.gamil.com', 587)
-    server.starttls()
-    server.login(senderemail, epwd)
-    server.sendermail(senderemail, to, 'hello this is a test email by jarvis')
-    server.close()
+    elif 'wikipedia' in query:
+        speak('searching on wikipedia')
+        query = query.replace("wikipedia", "")
+        result = wikipedia.summary(query, sentences = 2)
+        print(result)
+        speak(result)
+    
+    elif 'search' in query:
+        searchgoogle()
+    
+    elif 'offline' in query:
+        quit()
 
-sendEmail()
+
+#-----------------------------------Send Email Function------------------------------------------

@@ -1,3 +1,3 @@
-senderemail = ''
+senderemail = 'cfjimenez@cps.edu'
 epwd = ''
-to = ''
+to = 'jdmartinez14@cps.edu'
